@@ -1,0 +1,7 @@
+IN UBUNTU:
+    compileren:
+        mpicxx -o bestandnaam cpp-naam
+
+    runnen:
+        mpirun bestandnaam
+        (-np x => x aantal processen)

@@ -1,0 +1,26 @@
+SLURM_JOB_ID: 65160927
+SLURM_JOB_USER: vsc37933
+SLURM_JOB_ACCOUNT: lp_h_pds_iiw
+SLURM_JOB_NAME: oefening4.slurm
+SLURM_CLUSTER_NAME: wice
+SLURM_JOB_PARTITION: batch
+SLURM_NNODES: 1
+SLURM_NODELIST: n28c22n2
+SLURM_JOB_CPUS_PER_NODE: 8
+Date: Thu Sep 25 15:39:03 CEST 2025
+Walltime: 00-00:02:00
+========================================================================
+------------------------------------------------------------------------------
+cmake version 3.31.3
+
+CMake suite maintained and supported by Kitware (kitware.com/cmake).
+------------------------------------------------------------------------------
+JOBSTAT:ELAPSED_SECONDS=80
+JOBSTAT:SLURM_CLUSTER_NAME=wice
+JOBSTAT:SLURM_NODELIST=n28c22n2
+JOBSTAT:SLURM_NTASKS=8
+JOBSTAT:SLURM_GPUS_PER_NODE=
+JOBSTAT:SLURM_JOB_CPUS_PER_NODE=8
+JOBSTAT:SLURM_JOB_NUM_NODES=1
+JOBSTAT:SLURM_JOB_PARTITION=batch
+JOBSTAT:ESTIMATED_CREDITS=27

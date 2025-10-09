@@ -1,0 +1,23 @@
+SLURM_JOB_ID: 65251322
+SLURM_JOB_USER: vsc37933
+SLURM_JOB_ACCOUNT: lp_h_pds_iiw
+SLURM_JOB_NAME: main
+SLURM_CLUSTER_NAME: wice
+SLURM_JOB_PARTITION: batch
+SLURM_NNODES: 2
+SLURM_NODELIST: n28c20n2,n28c22n4
+SLURM_JOB_CPUS_PER_NODE: 1(x2)
+Date: Sun Oct  5 13:37:22 CEST 2025
+Walltime: 00-00:10:00
+========================================================================
+Buffer size: 1 bytes, Average round-trip time: 2.24171 microseconds
+Buffer size: 2 bytes, Average round-trip time: 2.24028 microseconds
+Buffer size: 4 bytes, Average round-trip time: 2.25114 microseconds
+Buffer size: 8 bytes, Average round-trip time: 2.25111 microseconds
+Buffer size: 16 bytes, Average round-trip time: 2.25525 microseconds
+Buffer size: 32 bytes, Average round-trip time: 2.31869 microseconds
+Buffer size: 64 bytes, Average round-trip time: 2.44482 microseconds
+Buffer size: 128 bytes, Average round-trip time: 2.5059 microseconds
+Buffer size: 256 bytes, Average round-trip time: 2.95379 microseconds
+Buffer size: 512 bytes, Average round-trip time: 3.12836 microseconds
+Buffer size: 1024 bytes, Average round-trip time: 3.40799 microseconds

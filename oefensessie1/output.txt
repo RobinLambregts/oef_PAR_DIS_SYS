@@ -1,0 +1,30 @@
+waarde voor N (aantal bins):4
+
+Bin 0 : (54.4014 -> 83.7632) Count = 5257
+Bin 1 : (83.7632 -> 113.125) Count = 85275
+Bin 2 : (113.125 -> 142.487) Count = 16222
+Bin 3 : (142.487 -> 171.849) Count = 93246
+#Row-major 0.92433 +/- 0.00974043 sec (200 measurements)
+#Column-major 5.02491 +/- 0.676484 sec (200 measurements)
+Sum = 2.49971e+07
+
+Process finished with exit code 0
+
+-o0:
+#Row-major 0.929575 +/- 0.0201471 sec (50 measurements)
+#Column-major 4.27849 +/- 0.0695965 sec (50 measurements)
+
+-o3:
+#Row-major 1e-08 +/- 3e-08 sec (50 measurements)
+#Column-major 4.34175 +/- 0.05759 sec (50 measurements)
+
+    => Er is een groot verschil te zien bij de row-major manier om de array te overlopen.
+    Dit is te verklaren door de optimalisaties die perfect werken voor een aaneengesloten array
+    waar het volgende element steeds het volgende element in de array is. Door het gebruik van
+    loop-unrolling, vectorisatie, ... verbeterd de tijd significant.
+
+    Bij de Column-major manier is er weinig verschil te zien, dit komt door de geheugen-layout en
+    hoe de cache hiermee kan omgaan. Omdat de elementen heel de tijd verspringen tussen het geheugen
+    kan de compiler niet goed voorspellen waar die volgend naartoe moet. Dit maakt dus dat de
+    geheugen-layout en hoe de elementen verspreid liggen over het geheugen ipv achter elkaar dat de
+    verbetertechnieken van de compiler weinig tot geen verschil maken bij het overlopen van heel de array.

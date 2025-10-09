@@ -1,0 +1,2 @@
+27.16 (P:batch,T:1.33,CPU:8@2.55,GPU:0) oefening4.slurm.o65160927
+27.16
