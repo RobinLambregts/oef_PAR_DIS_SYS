@@ -1,58 +1,68 @@
 #pragma once
 #include <mutex>
+#include <shared_mutex>
 #include <condition_variable>
-#include <stdexcept>
+#include <iostream>
 
 class SafeQueue {
 public:
-	SafeQueue() {
-		firstElement = 0;
-		lastElement = 0;
-	}
+    SafeQueue() : firstElement(0), lastElement(0), currentSize(0) {}
 
-	~SafeQueue() {
-		firstElement = 0;
-		lastElement = 0;
-	}
+    ~SafeQueue() = default;
 
-	void push(float f) {
-		std::unique_lock lock(mtx);
-		std::cout << "push: " << f << std::endl;
-		queue_not_full.wait(lock, [this] { return lastElement < queueSize; });
-		queue[lastElement] = f;
-		++lastElement;
-		queue_not_empty.notify_one();
-	}
+    // Voeg een element toe, wacht als de queue vol is
+    void push(float f) {
+        std::unique_lock lock(mtx);
+        queue_not_full.wait(lock, [this] { return currentSize < queueSize; });
 
-	void pop() {
-		std::unique_lock lock(mtx);
-		std::cout << "pop: " << queue[firstElement] << std::endl;
-		queue_not_empty.wait(lock, [this] { return lastElement > 0; });
-		--lastElement;
-		queue_not_full.notify_one();
-	}
+        queue[lastElement] = f;
+        lastElement = (lastElement + 1) % queueSize;
+        ++currentSize;
 
-	float get(unsigned int i) const {
-		std::unique_lock lock(mtx);
-		float ret = queue[(firstElement+i) % queueSize];
-		return ret;
-	}
+        queue_not_empty.notify_all(); // notify alle lezers
+    }
 
-	unsigned int getSize() {
-		std::unique_lock lock(mtx);
-		unsigned int tmp = lastElement;
-		if(lastElement < firstElement)
-			tmp += queueSize;
-		tmp = tmp-firstElement;
-		return tmp;
-	}
+    // Verwijder het eerste element uit de queue, wacht als leeg
+    float pop() {
+        std::unique_lock lock(mtx);
+        queue_not_empty.wait(lock, [this] { return currentSize > 0; });
+
+        float val = queue[firstElement];
+        firstElement = (firstElement + 1) % queueSize;
+        --currentSize;
+
+        queue_not_full.notify_one();
+        return val;
+    }
+
+    // Ophalen van het i-de element, wacht totdat beschikbaar
+    float waitAndGet(unsigned int i = 0) {
+        std::unique_lock lock(mtx);
+        queue_not_empty.wait(lock, [this, i] { return i < currentSize; });
+        return queue[(firstElement + i) % queueSize];
+    }
+
+    // Read-only functie: i-de element ophalen, wacht als nog niet beschikbaar
+    float get(unsigned int i) const {
+        std::shared_lock lock(mtx); // meerdere lezers tegelijk toegestaan
+        queue_not_empty.wait(lock, [this, i] { return i < currentSize; });
+        return queue[(firstElement + i) % queueSize];
+    }
+
+    // Read-only functie: huidige grootte van de queue
+    unsigned int getSize() const {
+        std::shared_lock lock(mtx);
+        return currentSize;
+    }
 
 private:
-	unsigned int firstElement, lastElement;
+    unsigned int firstElement, lastElement;
+    unsigned int currentSize;
 
-	const static unsigned int queueSize = 2;
-	float queue[queueSize];
-	mutable std::mutex mtx;
-	std::condition_variable queue_not_empty;
-	std::condition_variable queue_not_full;
+    const static unsigned int queueSize = 1024; // aanpasbare grootte
+    float queue[queueSize];
+
+    mutable std::shared_mutex mtx;
+    mutable std::condition_variable_any queue_not_empty;
+    mutable std::condition_variable_any queue_not_full;
 };

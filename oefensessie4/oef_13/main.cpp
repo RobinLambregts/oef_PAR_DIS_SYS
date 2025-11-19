@@ -1,65 +1,65 @@
-#include <mpi.h>
-#include <cmath>
 #include <iostream>
+#include <vector>
+#include <thread>
+#include <cmath>
+#include <mutex>
 #include "timer.h"
 
 double calculateArea(double bin, double binsize) {
     return sqrt(1 - bin*bin) * binsize;
 }
 
-int main(int argc, char** argv) {
-    MPI_Init(&argc, &argv);
-
-    int rank, size;
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    MPI_Comm_size(MPI_COMM_WORLD, &size);
-
+int main() {
     double min = -1.0, max = 1.0;
     long N = 1000000;
     double binsize = (max - min) / N;
 
-    long chunk = N / size;
-    long start = rank * chunk;
-    long end = (rank == size - 1) ? N : start + chunk;
+    unsigned int numThreads = std::thread::hardware_concurrency();
+    if(numThreads == 0) numThreads = 4; // fallback
 
-    double localSum = 0.0;
-    for (long i = start; i < end; i++) {
-        double bin = min + i * binsize;
-        localSum += calculateArea(bin, binsize);
+    std::vector<std::thread> threads(numThreads);
+    std::vector<double> localSums(numThreads, 0.0);
+
+    long chunk = N / numThreads;
+
+    AutoAverageTimer tCalc("Threaded Calculation");
+    tCalc.start();
+
+    for(unsigned int t = 0; t < numThreads; ++t) {
+        long start = t * chunk;
+        long end = (t == numThreads - 1) ? N : start + chunk;
+
+        threads[t] = std::thread([&, start, end, t]() {
+            double localSum = 0.0;
+            for(long i = start; i < end; ++i) {
+                double bin = min + i * binsize;
+                localSum += calculateArea(bin, binsize);
+            }
+            localSums[t] = localSum; // schrijf naar vector op index t
+        });
     }
 
-    AutoAverageTimer tReduce("MPI_Reduce");
-    tReduce.start();
-    double total_reduce = 0.0;
-    MPI_Reduce(&localSum, &total_reduce, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
-    tReduce.stop();
+    for(auto& th : threads) th.join();
 
-    if(rank == 0){
-        std::cout << "MPI_Reduce calculated area: " << total_reduce << std::endl;
-        std::cout << "Actual area: " << M_PI / 2 << std::endl;
-        tReduce.report(std::cout);
-    }
+    double totalSum = 0.0;
+    for(double s : localSums) totalSum += s;
 
-    MPI_Finalize();
+    tCalc.stop();
+
+    std::cout << "Threaded calculated area: " << totalSum << std::endl;
+    std::cout << "Actual area: " << M_PI / 2 << std::endl;
+    tCalc.report(std::cout);
+
     return 0;
 }
 
 /*
 * OUTPUT:
 *
- * SLURM_JOB_ID: 65293174
-SLURM_JOB_USER: vsc37933
-SLURM_JOB_ACCOUNT: lp_h_pds_iiw
-SLURM_JOB_NAME: main
-SLURM_CLUSTER_NAME: wice
-SLURM_JOB_PARTITION: batch
-SLURM_NNODES: 1
-SLURM_NODELIST: s28c11n1
-SLURM_JOB_CPUS_PER_NODE: 5
-Date: Sun Oct 12 16:40:42 CEST 2025
-Walltime: 00-00:10:00
-========================================================================
-MPI_Reduce calculated area: 1.5708
+"C:\Users\robin\Documents\4e jaar\PAR_DIS_SYS\main.exe"
+Threaded calculated area: 1.5708
 Actual area: 1.5708
-#MPI_Reduce 0.010098 +/- 0 sec (1 measurements)
+#Threaded Calculation 0.0082125 +/- 0 sec (1 measurements)
+
+Process finished with exit code 0
  * */

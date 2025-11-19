@@ -1,3 +1,3 @@
-C:/Users/robin/Documents/4e jaar/PAR_DIS_SYS/cmake-build-debug/CMakeFiles/PAR_DIS_SYS.dir
-C:/Users/robin/Documents/4e jaar/PAR_DIS_SYS/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/robin/Documents/4e jaar/PAR_DIS_SYS/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+C:/Users/robin/Documents/4e jaar/PAR_DIS_SYS/Oefensessies/cmake-build-debug/CMakeFiles/PAR_DIS_SYS.dir
+C:/Users/robin/Documents/4e jaar/PAR_DIS_SYS/Oefensessies/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/robin/Documents/4e jaar/PAR_DIS_SYS/Oefensessies/cmake-build-debug/CMakeFiles/rebuild_cache.dir

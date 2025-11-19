@@ -1,6 +1,4 @@
 # ninja log v6
-15	188	7811175448593844	CMakeFiles/PAR_DIS_SYS.dir/oefensessie3/oef_8/main.cpp.obj	c37ef325f17141d0
-6	1396	7811191303885768	CMakeFiles/PAR_DIS_SYS.dir/oefensessie1/main.cpp.obj	2f067d34466c571b
 101	194	7812976237996727	PAR_DIS_SYS.exe	610c769c299ee765
-3	314	7812976511815732	build.ninja	3635ca472a5b7a64
+3	314	7852668885445323	build.ninja	3635ca472a5b7a64
 4	101	7812976237036160	CMakeFiles/PAR_DIS_SYS.dir/oefensessie3/oef_9/main.cpp.obj	ffbbdd4f37c78841
